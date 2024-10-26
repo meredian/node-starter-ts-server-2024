@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "lib": ["es2023"],
+    "target": "es2023",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "pretty": true,
+    "outDir": "dist",
+    "baseUrl": "src",
+    "rootDir": "src"
+  },
+  "ts-node": {
+    "swc": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.json"],
+  "exclude": ["node_modules"]
+}
