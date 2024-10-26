@@ -9,13 +9,14 @@
     "node": ">=22.10.0"
   },
   "scripts": {
-    "dev": "nodemon",
+    "dev": "nodemon | pino-pretty",
     "start": "npm run build && node dist/index.js",
-    "build": "rm -rf src && tsc && tsc-alias",
+    "build": "rm -rf dist && tsc && tsc-alias",
     "lint": "prettier --check . && eslint src/ --max-warnings=0 && tsc --noEmit ",
     "lint:fix": "prettier --write . ;  eslint src/ --fix; tsc --noEmit",
     "test": "ENV=${ENV:=test} jest ./src",
-    "hello": "./scripts/tsnode.sh src/bin/hello.ts"
+    "db:wait": "./scripts/tsnode.sh src/bin/db/wait-db.ts",
+    "db:reset": "./scripts/tsnode.sh src/bin/db/reset-db.ts"
   },
   "jest": {
     "modulePathIgnorePatterns": [
@@ -43,6 +44,8 @@
     "@types/eslint__js": "^8.42.3",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.8.1",
+    "@types/pg": "^8.11.10",
+    "drizzle-kit": "^0.26.2",
     "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
@@ -61,8 +64,11 @@
     "@types/lodash": "^4.17.12",
     "clone": "^2.1.2",
     "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.35.3",
     "envalid": "^8.0.0",
     "lodash": "^4.17.21",
+    "pg": "^8.13.1",
+    "pg-connection-string": "^2.7.0",
     "pino": "^9.5.0",
     "pino-pretty": "^11.3.0"
   }

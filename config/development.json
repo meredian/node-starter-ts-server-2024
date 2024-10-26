@@ -1,0 +1,6 @@
+{
+  "ENV": "development",
+  "NODE_ENV": "development",
+  "LOG_LEVEL": "debug",
+  "DB_CONNECTION_STRING": "postgresql://postgres:postgres@localhost:5432/development"
+}

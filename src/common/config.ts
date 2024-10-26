@@ -11,6 +11,8 @@ import { DeepPartial } from './utils/types';
 import type { LevelWithSilent } from './logger';
 
 import pkg from '../../package.json';
+import { DatabaseConfig, DbResetMode } from 'common/db/types';
+import { as } from './utils/type-helpers';
 
 interface ProcessEnv {
   [key: string]: string | undefined;
@@ -123,6 +125,7 @@ const buildCleanEnv = (inputEnv: ProcessEnv) => {
       SERVICE_NAME: str<string>({ default: pkg.name }),
       PORT: port({ default: 3000 }),
       HEALTHCHECK_TIMEOUT_MS: num({ default: 30000 }),
+      GRACEFUL_SHUTDOWN_TIMEOUT_MS: num({ default: 15000 }),
 
       SSE_HISTORY_TIMEFRAME_SEC: num({ default: 600 }),
       SSE_RETRY: num({ default: 1000 }),
@@ -137,6 +140,18 @@ const buildCleanEnv = (inputEnv: ProcessEnv) => {
       }),
       LOG_FILE_NAME: str({ default: undefined }),
       LOG_LEVEL_IS_STRINGIFIED: bool({ default: true }),
+
+      DB_RESET_MODE: str<DbResetMode>({
+        devDefault: DbResetMode.Recreate,
+        default: DbResetMode.None,
+        choices: [
+          DbResetMode.None,
+          DbResetMode.Recreate,
+          DbResetMode.DropTables,
+        ],
+      }),
+      DB_CONNECTION_STRING: str(),
+      DB_MAX_POOL_CONNECTIONS: num({ default: 10 }),
     },
     {
       reporter: ({ errors }) => {
@@ -184,6 +199,12 @@ const buildConfigObject = (inputEnv: ProcessEnv) => {
         name: env.LOG_FILE_NAME,
       },
     },
+    db: as<DatabaseConfig>({
+      resetMode: env.DB_RESET_MODE,
+      connString: env.DB_CONNECTION_STRING,
+      maxPoolConnections: env.DB_MAX_POOL_CONNECTIONS,
+    }),
+    gracefulShutdownTimeoutMs: env.GRACEFUL_SHUTDOWN_TIMEOUT_MS,
   };
 };
 

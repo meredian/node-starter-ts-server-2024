@@ -5,7 +5,7 @@ import typescriptEslint from 'typescript-eslint';
 
 export default [
   {
-    ignores: ['*.log.*', '*.log', 'node_modules/', 'dist/', 'src/'],
+    ignores: ['*.log.*', '*.log', 'node_modules/', 'dist/'],
     files: ['**/*.{ts}'],
     languageOptions: {
       parser,
