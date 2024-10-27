@@ -16,7 +16,9 @@
     "lint:fix": "prettier --write . ;  eslint src/ --fix; tsc --noEmit",
     "test": "ENV=${ENV:=test} jest ./src",
     "db:wait": "./scripts/tsnode.sh src/bin/db/wait-db.ts",
-    "db:reset": "./scripts/tsnode.sh src/bin/db/reset-db.ts"
+    "db:reset": "./scripts/tsnode.sh src/bin/db/reset-db.ts",
+    "db:migrate": "./scripts/tsnode.sh src/bin/db/migrate-db.ts",
+    "db:migration:gen": "./scripts/gen-migration.sh"
   },
   "jest": {
     "modulePathIgnorePatterns": [

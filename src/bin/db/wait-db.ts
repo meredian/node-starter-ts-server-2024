@@ -19,7 +19,7 @@ const ALLOW_REPLICA_FLAG = '--allow-replica';
   let dbIsUp = false;
   while (!dbIsUp) {
     try {
-      const db = getDb(config.db);
+      const db = getDb(config);
       const result = await db.execute(`SELECT pg_is_in_recovery();`);
       const isReplica = result.rows[0].pg_is_in_recovery;
       if ((isReplica && allowReplica) || !isReplica) {

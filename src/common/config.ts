@@ -141,6 +141,7 @@ const buildCleanEnv = (inputEnv: ProcessEnv) => {
       LOG_FILE_NAME: str({ default: undefined }),
       LOG_LEVEL_IS_STRINGIFIED: bool({ default: true }),
 
+      DB_LOG: bool({ default: false }),
       DB_RESET_MODE: str<DbResetMode>({
         devDefault: DbResetMode.Recreate,
         default: DbResetMode.None,
@@ -200,6 +201,7 @@ const buildConfigObject = (inputEnv: ProcessEnv) => {
       },
     },
     db: as<DatabaseConfig>({
+      log: env.DB_LOG,
       resetMode: env.DB_RESET_MODE,
       connString: env.DB_CONNECTION_STRING,
       maxPoolConnections: env.DB_MAX_POOL_CONNECTIONS,

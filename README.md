@@ -8,11 +8,16 @@ Fresh state as of 27.10.2024
 - ESLint (with new 9.0 "flat" config)
 - Jest
 - Most basic files: Config file + pino logger
-- PostgreSQL DB connection with Drizzle ORM
+- PostgreSQL DB connection with [Drizzle ORM](https://orm.drizzle.team/)
 
 ## Quick start
 
 - `npm install` to install
-- `npm run db:reset` to create databaes
+- `npm run db:reset` to create database & apply all migrations
 - `npm run dev` to start app in dev-mode
 - `npm test` to test
+
+## DB Management
+
+- `npm run db:migration:gen <name> [--custom]` to generate migration from schemd
+- `npm run db:migrate` to apply migration

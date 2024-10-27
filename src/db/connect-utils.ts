@@ -1,30 +1,53 @@
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { sql } from 'drizzle-orm';
+import { Logger as DbLogger } from 'drizzle-orm/logger';
 import { Config } from 'common/config';
 import { Pool, PoolConfig } from 'pg';
 import { parse } from 'pg-connection-string';
 import { Logger } from 'pino';
-import { DatabaseConfig, DbResetMode } from './types';
+import { DbResetMode } from './types';
+import { MIGRATION_CONFIG } from './drizzle-config';
+import { buildLogger } from 'common/logger';
+
+class DrizzlePinoLogger implements DbLogger {
+  private readonly _logger: Logger;
+  constructor(logger: Logger) {
+    this._logger = logger.child({ component: 'drizzle' });
+  }
+  logQuery(query: string, params: unknown[]): void {
+    this._logger.debug({ query, params }, 'Query');
+  }
+}
 
 export const getDb = <T extends Record<string, unknown>>(
-  config: DatabaseConfig,
+  config: Config,
+  logger?: Logger,
 ): NodePgDatabase<T> & {
   end: () => void;
 } => {
-  return getDbWithPoolConfig({
-    connectionString: config.connString,
-    max: config.maxPoolConnections,
-  });
+  const dbLogger = config.db.log ? buildLogger(config) || logger : undefined;
+  return getDbWithPoolConfig(
+    {
+      connectionString: config.db.connString,
+      max: config.db.maxPoolConnections,
+    },
+    dbLogger,
+  );
 };
 
 const getDbWithPoolConfig = <T extends Record<string, unknown>>(
   config: PoolConfig,
+  logger?: Logger,
 ): NodePgDatabase<T> & {
   end: () => void;
 } => {
   const pool = new Pool(config);
-  const db = drizzle(pool) as NodePgDatabase<T>;
+  const db = drizzle(pool, {
+    logger: logger ? new DrizzlePinoLogger(logger) : undefined,
+  }) as NodePgDatabase<T>;
   (db as any).end = () => pool.end();
+
   return db as NodePgDatabase<T> & { end: () => void };
 };
 
@@ -58,7 +81,7 @@ export const createDatabase = async (logger: Logger, config: Config) => {
   if (rows.length === 0) {
     // Binding '?' is not working for CREATE DATABASE
     await db.execute(
-      `CREATE DATABASE ${dbName} ENCODING='UTF8' LOCALE='C' TEMPLATE='template0'`,
+      `CREATE DATABASE "${dbName}" ENCODING='UTF8' LOCALE='C' TEMPLATE='template0'`,
     );
     logger.info(`Database ${dbName} created`);
   } else {
@@ -81,8 +104,8 @@ export const resetDb = async (logger: Logger, config: Config) => {
       `We can't reset database with reset mode ${config.db.resetMode}`,
     );
   }
-  const db = getDb(config.db);
-  db.end();
+
+  await migrateDb(logger, config);
 };
 
 export const dropDatabase = async (logger: Logger, config: Config) => {
@@ -101,7 +124,14 @@ export const dropDatabase = async (logger: Logger, config: Config) => {
   const db = getDbWithPoolConfig(connection);
 
   // Binding '?' is not working for DROP DATABASE
-  await db.execute(`DROP DATABASE IF EXISTS ${dbName}`);
+  await db.execute(`DROP DATABASE IF EXISTS "${dbName}"`);
   logger.info(`Database ${dbName} dropped`);
+  db.end();
+};
+
+export const migrateDb = async (logger: Logger, config: Config) => {
+  const db = getDb(config);
+  logger.info('Running migrations');
+  await migrate(db, MIGRATION_CONFIG);
   db.end();
 };

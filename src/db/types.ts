@@ -5,6 +5,7 @@ export enum DbResetMode {
 }
 
 export type DatabaseConfig = {
+  log: boolean;
   resetMode: DbResetMode;
   connString: string;
   maxPoolConnections: number;
