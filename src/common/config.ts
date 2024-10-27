@@ -11,7 +11,7 @@ import { DeepPartial } from './utils/types';
 import type { LevelWithSilent } from './logger';
 
 import pkg from '../../package.json';
-import { DatabaseConfig, DbResetMode } from 'common/db/types';
+import { DatabaseConfig, DbResetMode } from 'db/types';
 import { as } from './utils/type-helpers';
 
 interface ProcessEnv {

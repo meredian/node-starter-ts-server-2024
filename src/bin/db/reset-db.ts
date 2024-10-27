@@ -1,5 +1,5 @@
 import { getEnvConfig } from 'common/config';
-import { resetDb } from 'common/db/connect-utils';
+import { resetDb } from 'db/connect-utils';
 import { buildLogger } from 'common/logger';
 
 const config = getEnvConfig();

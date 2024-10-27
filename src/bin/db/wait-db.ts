@@ -1,5 +1,5 @@
 import { getEnvConfig } from 'common/config';
-import { getDb } from 'common/db/connect-utils';
+import { getDb } from 'db/connect-utils';
 import { buildLogger } from 'common/logger';
 import { delay } from 'common/utils/delay';
 

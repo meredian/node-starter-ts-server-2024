@@ -1,0 +1,6 @@
+{
+  "ENV": "test",
+  "NODE_ENV": "test",
+  "LOG_LEVEL": "silent",
+  "DB_CONNECTION_STRING": "postgresql://postgres:postgres@localhost:5432/my-app-test"
+}
